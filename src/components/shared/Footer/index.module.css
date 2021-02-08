@@ -1,0 +1,35 @@
+.container {
+  color: white;
+  height: 129px;
+  display: flex;
+  justify-content: center;
+}
+.sub-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.tech {
+  font-family: "Permanent Marker";
+  font-weight: bold;
+  color: #8bdf83;
+}
+.my-profile {
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+.my-profile:hover {
+  text-decoration: underline;
+  color: #8bdf83;
+}
+.api {
+  font-weight: bold;
+  text-decoration: none;
+  color: white;
+}
+.api:hover {
+  text-decoration: underline;
+  color: #8bdf83;
+}
