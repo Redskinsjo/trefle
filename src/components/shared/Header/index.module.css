@@ -2,6 +2,7 @@
   height: 129px;
   display: flex;
   justify-content: center;
+  position: relative;
 }
 .menu-item:hover {
   color: white;
