@@ -5,9 +5,13 @@ export const GlobalStateContext = React.createContext()
 export const GlobalDispatchContext = React.createContext()
 
 const initialState = {
-  status: "away",
+  status: Cookie.get("token") ? "logged-in" : "away",
   firstName: null,
   lastName: null,
+  setUser: async token => {
+    if (token) await Cookie.set("token", token)
+    else await Cookie.remove("token")
+  },
 }
 
 const reducer = (state = initialState, action) => {
@@ -21,6 +25,7 @@ const reducer = (state = initialState, action) => {
       }
     case "DISCONNECT":
       return {
+        ...state,
         status: "away",
         firstName: null,
         lastName: null,

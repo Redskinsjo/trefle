@@ -18,7 +18,7 @@
 .my-profile {
   font-weight: bold;
   text-decoration: none;
-  color: white;
+  color: silver;
 }
 .my-profile:hover {
   text-decoration: underline;
@@ -27,7 +27,7 @@
 .api {
   font-weight: bold;
   text-decoration: none;
-  color: white;
+  color: silver;
 }
 .api:hover {
   text-decoration: underline;

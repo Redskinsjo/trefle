@@ -1,37 +1,50 @@
 import React, { useState, useContext } from "react"
 import css from "./index.module.css"
 import Logo from "../../../assets/img/logo_transparent.png"
-import { Link, navigate } from "gatsby"
+import { Link } from "@reach/router"
 import Layout from "../Layout/index"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import "@fontsource/permanent-marker"
 import "@fontsource/catamaran"
-import { GlobalStateContext } from "../../../context/GlobalContextProvider"
+import {
+  GlobalDispatchContext,
+  GlobalStateContext,
+} from "../../../context/GlobalContextProvider"
+import { Ellipsis } from "react-css-spinners"
 
 const layoutStyles = {
   height: "100%",
 }
 
-const Header = ({
-  style,
-  userOptions,
-  setUserOptions,
-  setDisplayLogin,
-  back,
-}) => {
+const Header = ({ style, setDisplayLogin, back, nav, isLoading }) => {
   const [isMenuClicked, setIsMenuClicked] = useState(false)
   const state = useContext(GlobalStateContext)
+  const dispatch = useContext(GlobalDispatchContext)
 
   return (
     <div className={css.container} style={style}>
       <div style={{ width: "100%", display: "flex", alignItems: "center" }}>
         {back && (
-          <Link to="/">
-            <FontAwesomeIcon
-              icon="long-arrow-alt-left"
-              style={{ fontSize: 33, margin: "30px 60px", cursor: "pointer" }}
+          <FontAwesomeIcon
+            icon="long-arrow-alt-left"
+            style={{ fontSize: 33, margin: "30px 60px", cursor: "pointer" }}
+            onClick={() => {
+              window.history.back()
+            }}
+          />
+        )}
+        {isLoading && back ? (
+          <Ellipsis type="ThreeDots" color="black" height={80} width={40} />
+        ) : (
+          isLoading && (
+            <Ellipsis
+              type="ThreeDots"
+              color="black"
+              height={80}
+              width={40}
+              style={{ margin: "0 60px" }}
             />
-          </Link>
+          )
         )}
       </div>
       <Layout style={layoutStyles}>
@@ -39,7 +52,7 @@ const Header = ({
           <img src={Logo} style={{ height: "100%" }} alt="logo"></img>
         </Link>
       </Layout>
-      {!back ? (
+      {nav ? (
         <div
           style={{
             width: "100%",
@@ -167,21 +180,30 @@ const Header = ({
                   <FontAwesomeIcon icon="leaf" style={{ fontSize: 22 }} />
                   Plantes
                 </li>
-                <li
+
+                <Link
+                  to="/chat/"
                   style={{
-                    padding: "12px 30px",
-                    fontSize: 24,
-                    fontFamily: "Permanent Marker",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    cursor: "pointer",
-                    margin: "10px 0px",
+                    textDecoration: "none",
+                    color: "black",
                   }}
-                  className={css.menuItem}
                 >
-                  <FontAwesomeIcon icon="comments" style={{ fontSize: 22 }} />
-                  Chat
-                </li>
+                  <li
+                    style={{
+                      padding: "12px 30px",
+                      fontSize: 24,
+                      fontFamily: "Permanent Marker",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      cursor: "pointer",
+                      margin: "10px 0px",
+                    }}
+                    className={css.menuItem}
+                  >
+                    <FontAwesomeIcon icon="comments" style={{ fontSize: 22 }} />
+                    Chat
+                  </li>
+                </Link>
                 <li
                   style={{
                     padding: "12px 30px",
@@ -200,16 +222,21 @@ const Header = ({
                   />
                   À propos
                 </li>
-                {userOptions.status === "logged-in" ? (
+                {state.status === "logged-in" ? (
                   <li
                     style={{
-                      padding: "12px 30px",
+                      padding: "12px 15px",
                       fontSize: 24,
                       fontFamily: "Permanent Marker",
                       display: "flex",
                       justifyContent: "space-between",
                       cursor: "pointer",
                       margin: "10px 0px",
+                    }}
+                    className={css.menuItem}
+                    onClick={() => {
+                      dispatch({ type: "DISCONNECT" })
+                      state.setUser(null)
                     }}
                   >
                     <FontAwesomeIcon icon="user" style={{ fontSize: 22 }} />

@@ -1,48 +1,68 @@
-import React, { useState } from "react"
+import React, { useState, useContext } from "react"
 import Fog from "../assets/img/fog2.jpg"
 import axios from "axios"
-import { Ellipsis } from "react-css-spinners"
 import Footer from "../components/shared/Footer"
 import Header from "../components/shared/Header/index"
+import { navigate } from "@reach/router"
+import {
+  GlobalStateContext,
+  GlobalDispatchContext,
+} from "../context/GlobalContextProvider"
 
-export default function Signup({ location }) {
+export default function Signup(props) {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [displayCatchError, setDisplayCatchError] = useState({
+    status: null,
+    message: null,
+  })
+  const dispatch = useContext(GlobalDispatchContext)
+  const state = useContext(GlobalStateContext)
 
-  const [displayCatchError, setDisplayCatchError] = useState(false)
-  const [displaySignup, setDisplaySignup] = useState(true)
-
-  console.log(location)
-
-  const signup = async () => {
-    try {
-      const { data, status } = await axios.post(
-        "http://localhost:3003/signup",
-        {
-          firstName,
-          lastName,
-          email,
-          password,
-        }
-      )
-      if (status === 200) {
-        location.state.setUser(data.token)
-        location.state.setUserOptions(
-          Object.assign(location.state.userOptions, {
-            status: "logged-in",
-            firstName: data.firstName,
-            lastName: data.lastName,
-          })
+  // Signup function request to API
+  const signup = e => {
+    e.preventDefault()
+    setIsLoading(true)
+    setTimeout(async () => {
+      try {
+        const { data, status } = await axios.post(
+          "http://localhost:3003/signup",
+          {
+            firstName,
+            lastName,
+            email,
+            password,
+          }
         )
+        if (status === 200) {
+          state.setUser(data.token)
+          dispatch({
+            type: "CONNECT",
+            payload: {
+              status: "logged-in",
+              firstName: data.firstName,
+              lastName: data.lastName,
+            },
+          })
+          setIsLoading(false)
+          setFirstName("")
+          setLastName("")
+          setEmail("")
+          setPassword("")
+          navigate("/")
+        }
+      } catch (error) {
         setIsLoading(false)
+        setDisplayCatchError(
+          error.response.data.type === "email"
+            ? { status: "email", message: error.response.data.error }
+            : { status: "general", message: error.response.data.error }
+        )
       }
-    } catch (error) {
-      setDisplaySignup(false)
-      setDisplayCatchError(true)
-    }
+    }, 2000)
   }
 
   return (
@@ -72,17 +92,7 @@ export default function Signup({ location }) {
           position: "relative",
         }}
       >
-        <Header back={true} />
-
-        {isLoading && (
-          <Ellipsis
-            type="ThreeDots"
-            color="black"
-            height={80}
-            width={40}
-            style={{ position: "absolute", top: 20, left: 40 }}
-          />
-        )}
+        <Header back={true} isLoading={isLoading} />
 
         <div
           style={{
@@ -142,24 +152,60 @@ export default function Signup({ location }) {
                 placeholder="Nom de famille"
                 style={{ height: 25, marginBottom: 25 }}
               />
-              <input
-                type="text"
-                value={email}
-                onChange={e => {
-                  setEmail(e.target.value)
-                }}
-                placeholder="Email"
-                style={{ height: 25, marginBottom: 25 }}
-              />
-              <input
-                type="text"
-                value={password}
-                onChange={e => {
-                  setPassword(e.target.value)
-                }}
-                placeholder="Mot de passe"
-                style={{ height: 25, marginBottom: 25 }}
-              />
+              {displayCatchError.status === "email" ? (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <input
+                    type="text"
+                    value={email}
+                    onChange={e => {
+                      setEmail(e.target.value)
+                    }}
+                    placeholder="Email"
+                    style={{ height: 25 }}
+                  />
+                  <div style={{ height: 25, color: "red" }}>
+                    {displayCatchError.message}
+                  </div>
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  value={email}
+                  onChange={e => {
+                    setEmail(e.target.value)
+                  }}
+                  placeholder="Email"
+                  style={{ height: 25, marginBottom: 25 }}
+                />
+              )}
+
+              {displayCatchError.status === "general" ? (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <input
+                    type="text"
+                    value={password}
+                    onChange={e => {
+                      setPassword(e.target.value)
+                    }}
+                    placeholder="Mot de passe"
+                    style={{ height: 25, width: "100%" }}
+                  />
+                  <div style={{ height: 25, color: "red" }}>
+                    {displayCatchError.message}
+                  </div>
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  value={password}
+                  onChange={e => {
+                    setPassword(e.target.value)
+                  }}
+                  placeholder="Mot de passe"
+                  style={{ height: 25, marginBottom: 25 }}
+                />
+              )}
+
               <div
                 style={{
                   marginTop: 15,
@@ -177,8 +223,6 @@ export default function Signup({ location }) {
               </div>
             </form>
           </div>
-          ){/* Modal d'erreur apparait aussi sur toggle true du state */}
-          {displayCatchError && <div style={{ width: 350, height: 800 }}></div>}
         </div>
       </div>
       <Footer />
