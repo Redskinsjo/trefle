@@ -13,16 +13,9 @@ module.exports = {
   },
   plugins: [
     {
-      resolve: "gatsby-plugin-prefetch-google-fonts",
+      resolve: "gatsby-plugin-google-fonts",
       options: {
-        fonts: [
-          { family: "Permanent Marker", display: "swap" },
-          {
-            family: "Catamaran",
-            variants: ["200", "462", "700"],
-            display: "swap",
-          },
-        ],
+        fonts: ["Permanent Marker", "Catamaran"],
       },
     },
     `gatsby-plugin-fontawesome-css`,

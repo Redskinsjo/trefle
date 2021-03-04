@@ -15,6 +15,7 @@ const ChatBox = () => {
   const [msgs, setMsgs] = useState([])
   const [isReady, setIsReady] = useState(false)
   const [userInput, setUserInput] = useState("")
+  const chatBoxRef = useRef()
 
   const settleMessageService = async () => {
     const msgs = await app.service("messages").find()
@@ -36,11 +37,20 @@ const ChatBox = () => {
 
   useEffect(() => {
     settleMessageService()
+    setTimeout(
+      () =>
+        chatBoxRef.current.scrollTo({
+          top: chatBoxRef.current.scrollHeight,
+          left: 0,
+          behavior: "smooth",
+        }),
+      1000
+    )
   }, [])
 
   return (
-    <div style={{ width: 450, margin: 30, padding: "0px 35px" }}>
-      <div className={css.container}>
+    <div style={{ width: 450, margin: 30 }}>
+      <div className={css.container} ref={chatBoxRef}>
         <div
           style={{
             width: "100%",
@@ -122,7 +132,7 @@ const ChatBox = () => {
             })}
         </div>
       </div>
-      <div style={{ display: "flex", margin: "0px 35px", width: "100%" }}>
+      <div style={{ display: "flex", margin: "0px 35px" }}>
         <input
           style={{ flexGrow: 1, height: 50 }}
           value={userInput}

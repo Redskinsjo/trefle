@@ -6,3 +6,6 @@
   overflow: hidden;
   overflow-y: scroll;
 }
+.container::-webkit-scrollbar {
+  bottom: 0;
+}
