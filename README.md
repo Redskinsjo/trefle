@@ -25,3 +25,5 @@ Not implemented yet
 4. Développer le projet en local avec :
 
 ```yarn start```
+
+et visiter ```http://localhost:8000```
