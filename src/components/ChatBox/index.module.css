@@ -1,6 +1,8 @@
 .container {
   height: 500px;
-  width: 350px;
-  padding: 20px 35px;
-  background-color: black;
+  width: 450px;
+  padding: 0px 35px;
+  box-sizing: border-box;
+  overflow: hidden;
+  overflow-y: scroll;
 }
