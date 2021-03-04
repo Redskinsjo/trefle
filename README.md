@@ -26,4 +26,4 @@ Not implemented yet
 
 ```yarn start```
 
-et visiter ```http://localhost:8000```
+et visiter [http://localhost:8000](http://localhost:8000)
